@@ -4,7 +4,7 @@ import math
 import sys
 import os
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
 # Initialize Pygame
 pygame.init()
@@ -13,12 +13,13 @@ pygame.init()
 WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = 768
 FPS = 60
-OBJECT_SIZE_RATIO = 1/20  # Objects are 1/20 of screen size
+OBJECT_SIZE_RATIO = 1/15  # Objects are 1/15 of screen size
 OBJECT_SIZE = int(min(WINDOW_WIDTH, WINDOW_HEIGHT) * OBJECT_SIZE_RATIO)
 SPAWN_INTERVAL = 0.1  # seconds
-SPEED_INCHES_PER_SEC = 1
+SPEED_INCHES_PER_SEC = 2
 DPI = 96  # Standard screen DPI
 SPEED_PIXELS_PER_FRAME = (SPEED_INCHES_PER_SEC * DPI) / FPS
+INITIAL_OBJECT_COUNT = 50
 
 # Colors
 BLACK = (0, 0, 0)
@@ -94,6 +95,11 @@ class GameObject:
     
     def collides_with(self, other):
         return self.get_distance(other) < (self.radius + other.radius)
+    
+    def convert_to_type(self, new_type: ObjectType):
+        """Convert this object to a different type, keeping position and velocity"""
+        self.type = new_type
+        self.sprite = self.load_sprite()
 
 class Button:
     def __init__(self, x, y, width, height, text, font):
@@ -166,7 +172,7 @@ class Game:
         self.objects_to_spawn = []
         
         # UI Controls
-        self.object_count_control = NumberControl(10, 10, "Objects per type", 10, 1, 50, self.font)
+        self.object_count_control = NumberControl(10, 10, "Objects per type", INITIAL_OBJECT_COUNT, 1, 200, self.font)
         self.new_game_button = Button(10, 50, 100, 30, "New Game", self.font)
     
     def start_new_game(self):
@@ -215,20 +221,20 @@ class Game:
             obj.update()
         
         # Check collisions
-        to_remove = set()
+        converted_objects = []
         for i, obj1 in enumerate(self.objects):
-            if i in to_remove:
-                continue
             for j, obj2 in enumerate(self.objects[i+1:], i+1):
-                if j in to_remove:
-                    continue
                 if obj1.collides_with(obj2):
-                    winner, loser_idx = self.determine_winner(obj1, obj2, i, j)
+                    winner_obj, loser_idx = self.determine_winner(obj1, obj2, i, j)
                     if loser_idx is not None:
-                        to_remove.add(loser_idx)
+                        # Convert the loser to the winner's type
+                        loser_obj = self.objects[loser_idx]
+                        converted_objects.append((loser_idx, winner_obj.type))
         
-        # Remove defeated objects
-        self.objects = [obj for i, obj in enumerate(self.objects) if i not in to_remove]
+        # Apply conversions
+        for loser_idx, winner_type in converted_objects:
+            if loser_idx < len(self.objects):
+                self.objects[loser_idx].convert_to_type(winner_type)
         
         # Check win condition
         if self.objects and not self.objects_to_spawn:
