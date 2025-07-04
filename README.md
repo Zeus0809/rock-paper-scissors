@@ -36,5 +36,8 @@ Any follow-up questions or considerations before I let you start?
 Any other questions?
 
 ## Prompt 3:
+When a collision happens, instead of eliminating the losing object, turn it into an instance of the winner object. Example: if a rock hit scissors, the scissors should turn into another rock, etc.
+
+## Prompt 4:
 
 

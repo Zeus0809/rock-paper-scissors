@@ -167,6 +167,7 @@ class Game:
         # Game state
         self.objects: List[GameObject] = []
         self.game_running = False
+        self.game_paused = False
         self.winner = None
         self.spawn_timer = 0
         self.objects_to_spawn = []
@@ -174,13 +175,18 @@ class Game:
         # UI Controls
         self.object_count_control = NumberControl(10, 10, "Objects per type", INITIAL_OBJECT_COUNT, 1, 200, self.font)
         self.new_game_button = Button(10, 50, 100, 30, "New Game", self.font)
+        self.pause_button = Button(120, 50, 80, 30, "Pause", self.font)
     
     def start_new_game(self):
         self.objects.clear()
         self.objects_to_spawn.clear()
         self.game_running = True
+        self.game_paused = False
         self.winner = None
         self.spawn_timer = 0
+        
+        # Update pause button text
+        self.pause_button.text = "Pause"
         
         count = self.object_count_control.value
         
@@ -205,7 +211,7 @@ class Game:
         random.shuffle(self.objects_to_spawn)
     
     def update(self, dt):
-        if not self.game_running:
+        if not self.game_running or self.game_paused:
             return
         
         # Spawn objects
@@ -271,6 +277,7 @@ class Game:
         # Draw UI
         self.object_count_control.draw(self.screen)
         self.new_game_button.draw(self.screen)
+        self.pause_button.draw(self.screen)
         
         # Draw object counts
         counts = self.get_counts()
@@ -302,6 +309,19 @@ class Game:
             
             self.screen.blit(winner_surf, winner_rect)
         
+        # Draw pause message
+        elif self.game_paused:
+            pause_text = "PAUSED"
+            pause_surf = self.big_font.render(pause_text, True, WHITE)
+            pause_rect = pause_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            
+            # Draw background for text
+            bg_rect = pause_rect.inflate(40, 20)
+            pygame.draw.rect(self.screen, BLACK, bg_rect)
+            pygame.draw.rect(self.screen, WHITE, bg_rect, 3)
+            
+            self.screen.blit(pause_surf, pause_rect)
+        
         pygame.display.flip()
     
     def handle_event(self, event):
@@ -314,6 +334,11 @@ class Game:
         
         if self.new_game_button.handle_event(event):
             self.start_new_game()
+        
+        if self.pause_button.handle_event(event):
+            if self.game_running and not self.winner:
+                self.game_paused = not self.game_paused
+                self.pause_button.text = "Resume" if self.game_paused else "Pause"
         
         return True
     
