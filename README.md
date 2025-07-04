@@ -39,5 +39,55 @@ Any other questions?
 When a collision happens, instead of eliminating the losing object, turn it into an instance of the winner object. Example: if a rock hit scissors, the scissors should turn into another rock, etc.
 
 ## Prompt 4:
+I love it! Another change:
+
+Add a 'Pause' button that pauses the game. When pressed, it should get replaced with a 'Resume' button that resumes the game.
+
+## Prompt 5:
+I don't like the way the object count increment buttons look. Make them actual up/down arrows and make them look nicer
+
+## Prompt 6:
+Also, make the game window resizable, and possible to turn to full screen.
+
+## Prompt 7:
+I'm getting an error when trying to run:
+Traceback (most recent call last):
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 489, in <module>
+    game = Game()
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 243, in __init__
+    self.update_window_dependent_values()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 264, in update_window_dependent_values
+    for obj in self.objects:
+               ^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute 'objects'
+
+## Prompt 8:
+The New Game and Pause buttons overlap with the object count control. Let's rearrange the header items a little:
+
+1) Put the New Game and Pause buttons in a column to the very right of the header.
+2) Make the stats bigger and center them in the header.
+3) Put the object count control on the left side, symmetrical to the column with the other buttons.
+Make sure everything is symmetrical and nicely placed according to UI best practices. I don't want it to be ugly!
+
+## Prompt 9:
+Traceback (most recent call last):
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 525, in <module>
+    game = Game()
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 251, in __init__
+    self.update_window_dependent_values()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 269, in update_window_dependent_values
+    self.update_ui_positions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/illiakozlov/Desktop/rock-paper-scissors/game.py", line 283, in update_ui_positions
+    self.new_game_button.rect.x = self.window_width - button_width - 20
+    ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute 'new_game_button'
+
+## Prompt 10:
+The Pause button overlaps with the bottom header boundary. Make the header thicker to account for the button height.
+
+## Prompt 11:
 
 
