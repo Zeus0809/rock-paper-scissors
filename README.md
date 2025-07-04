@@ -89,5 +89,10 @@ AttributeError: 'Game' object has no attribute 'new_game_button'
 The Pause button overlaps with the bottom header boundary. Make the header thicker to account for the button height.
 
 ## Prompt 11:
+Different object types spawn at different rates. Is that something caused by FPS fluctuations, or can you change it to be a uniform process?
+
+## Prompt 12:
+As the code stands right now, is every object type getting spawned at the same time? Meaning, for each spawning event, are scissors, paper and rock appearing all at once? That's how it should be. And they all should follow the same spawning interval between instances.
+
 
 

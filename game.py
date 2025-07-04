@@ -335,18 +335,21 @@ class Game:
             (ObjectType.ROCK, self.window_width - 50, 130),  # Top right (below header)
         ]
         
-        for obj_type, base_x, base_y in spawn_positions:
-            for i in range(count):
+        # Create spawn batches - each batch contains one of each type
+        for i in range(count):
+            batch = []
+            for obj_type, base_x, base_y in spawn_positions:
                 # Add small random offset to prevent overlap
                 x = base_x + random.randint(-30, 30)
                 y = base_y + random.randint(-30, 30)
                 # Ensure objects stay within bounds using current window size
                 x = max(self.object_size, min(self.window_width - self.object_size, x))
                 y = max(120, min(self.window_height - self.object_size, y))
-                self.objects_to_spawn.append((obj_type, x, y))
-        
-        # Shuffle to randomize spawn order
-        random.shuffle(self.objects_to_spawn)
+                batch.append((obj_type, x, y))
+            
+            # Shuffle the order within each batch for visual variety
+            random.shuffle(batch)
+            self.objects_to_spawn.append(batch)
     
     def update(self, dt):
         if not self.game_running or self.game_paused:
@@ -356,8 +359,10 @@ class Game:
         if self.objects_to_spawn:
             self.spawn_timer += dt
             if self.spawn_timer >= SPAWN_INTERVAL:
-                obj_type, x, y = self.objects_to_spawn.pop(0)
-                self.objects.append(GameObject(obj_type, x, y, self))
+                # Spawn an entire batch (one of each type) simultaneously
+                batch = self.objects_to_spawn.pop(0)
+                for obj_type, x, y in batch:
+                    self.objects.append(GameObject(obj_type, x, y, self))
                 self.spawn_timer = 0
         
         # Update objects
